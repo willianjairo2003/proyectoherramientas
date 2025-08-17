@@ -1,0 +1,333 @@
+{% extends 'base.html' %}
+{% block title %}Usuarios{% endblock %}
+
+{% block body %}
+<h2>Gestión de Usuarios</h2>
+
+<!-- Botón para nuevo usuario -->
+<button class="btn btn-primary mb-3" onclick="abrirModalAgregar()">+ Nuevo Usuario</button>
+
+<!-- Tabla de usuarios -->
+<table class="table table-bordered table-hover" id="tablaUsuarios">
+  <thead class="table-dark">
+    <tr>
+      <th>ID</th>
+      <th>Nombre</th>
+      <th>Correo</th>
+      <th>Rol</th>
+      <th>Colegio</th>
+      <th>Estado</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for usuario in usuarios %}
+    <tr id="fila-{{ usuario.id }}">
+      <td>{{ usuario.id }}</td>
+      <td>{{ usuario.fullname }}</td>
+      <td>{{ usuario.username }}</td>
+      <td>{{ usuario.rol }}</td> 
+      <td>{{ usuario.colegio_nombre or '' }}</td>
+      <td>
+        <select class="form-select form-select-sm estado-usuario" 
+                data-id="{{ usuario.id }}"
+                onchange="cambiarEstado(this)">
+          <option value="pendiente" {% if usuario.estado == 'pendiente' %}selected{% endif %}>Pendiente</option>
+          <option value="aprobado" {% if usuario.estado == 'aprobado' %}selected{% endif %}>Aprobado</option>
+          <option value="rechazado" {% if usuario.estado == 'rechazado' %}selected{% endif %}>Rechazado</option>
+        </select>
+      </td>
+      <td>
+        <div class="d-flex align-items-center gap-2 flex-nowrap">
+          <button class="btn btn-warning btn-sm"
+                  onclick="abrirModalEditar(this)"
+                  data-id="{{ usuario.id }}"
+                  data-fullname="{{ usuario.fullname }}"
+                  data-username="{{ usuario.username }}"
+                  data-rol="{{ usuario.rol_id }}"
+                  data-colegio="{{ usuario.colegio_id or '' }}"
+                  data-estado="{{ usuario.estado }}">
+            Editar
+          </button>
+          <button class="btn btn-danger btn-sm"
+                  onclick="confirmarEliminar(this)"
+                  data-id="{{ usuario.id }}">
+            Eliminar
+          </button>
+        </div>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<!-- Modal para agregar/editar usuario -->
+<div class="modal fade" id="modalUsuario" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <form class="modal-content" id="formUsuario" method="POST">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalTitle">Agregar Usuario</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" name="id" id="usuarioId">
+        <div class="mb-3">
+          <label for="fullname" class="form-label">Nombre</label>
+          <input type="text" class="form-control" name="fullname" id="fullname" required>
+        </div>
+        <div class="mb-3">
+          <label for="username" class="form-label">Correo</label>
+          <input type="email" class="form-control" name="username" id="username" required>
+        </div>
+        <div class="mb-3">
+          <label for="password" class="form-label">Contraseña</label>
+          <input type="text" class="form-control" name="password" id="password" placeholder="Ej: abc123">
+        </div>
+        <div class="mb-3">
+          <label for="rol" class="form-label">Rol</label>
+          <select class="form-select" name="rol" id="rol" required>
+            {% for rol in roles %}
+            <option value="{{ rol.id }}">{{ rol.nombre }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- Desglose de colegio -->
+        <div class="mb-3">
+          <label class="form-label">Colegio</label>
+          <div class="row g-2">
+            <div class="col-md-4">
+              <select class="form-select" id="distrito" onchange="cargarNombresColegios()">
+                <option value="">Seleccionar distrito</option>
+                {% for distrito in distritos %}
+                <option value="{{ distrito }}">{{ distrito }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="col-md-4">
+              <select class="form-select" id="nombre_colegio" onchange="cargarTiposColegios()" disabled>
+                <option value="">Seleccionar nombre</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <select class="form-select" name="colegio_id" id="colegio_id" disabled required>
+                <option value="">Seleccionar tipo</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="estado" class="form-label">Estado</label>
+          <select id="estado" class="form-select" name="estado" required>
+            <option value="pendiente">Pendiente</option>
+            <option value="aprobado">Aprobado</option>
+            <option value="rechazado">Rechazado</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-success">Guardar</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+// Variable global para almacenar colegios
+let todosLosColegios = [];
+
+// Cargar colegios al iniciar la página
+document.addEventListener('DOMContentLoaded', function() {
+  fetch('/api/colegios')
+    .then(response => response.json())
+    .then(data => {
+      todosLosColegios = data;
+    });
+});
+
+function abrirModalAgregar() {
+  const form = document.getElementById("formUsuario");
+  form.reset();
+  document.getElementById("usuarioId").value = "";
+  document.getElementById("modalTitle").innerText = "Agregar Usuario";
+  document.getElementById("password").required = true;
+
+  document.getElementById("estado").value = "pendiente";
+
+  // Resetear selects colegio
+  document.getElementById("distrito").value = "";
+  document.getElementById("nombre_colegio").innerHTML = '<option value="">Seleccionar nombre</option>';
+  document.getElementById("nombre_colegio").disabled = true;
+  document.getElementById("colegio_id").innerHTML = '<option value="">Seleccionar tipo</option>';
+  document.getElementById("colegio_id").disabled = true;
+
+  new bootstrap.Modal(document.getElementById("modalUsuario")).show();
+}
+
+function abrirModalEditar(button) {
+  document.getElementById("usuarioId").value = button.getAttribute("data-id");
+  document.getElementById("fullname").value = button.getAttribute("data-fullname");
+  document.getElementById("username").value = button.getAttribute("data-username");
+  document.getElementById("rol").value = button.getAttribute("data-rol");
+  document.getElementById("estado").value = button.getAttribute("data-estado");
+
+  const colegioId = button.getAttribute("data-colegio");
+
+  if (colegioId) {
+    // Buscar el colegio seleccionado
+    const colegio = todosLosColegios.find(c => c.id == colegioId);
+    if (colegio) {
+      document.getElementById("distrito").value = colegio.distrito;
+      cargarNombresColegios(() => {
+        document.getElementById("nombre_colegio").value = colegio.nombre_colegio;
+        cargarTiposColegios(() => {
+          document.getElementById("colegio_id").value = colegio.id;
+        });
+      });
+    }
+  } else {
+    // Resetear selects colegio si no tiene colegio asignado
+    document.getElementById("distrito").value = "";
+    document.getElementById("nombre_colegio").innerHTML = '<option value="">Seleccionar nombre</option>';
+    document.getElementById("nombre_colegio").disabled = true;
+    document.getElementById("colegio_id").innerHTML = '<option value="">Seleccionar tipo</option>';
+    document.getElementById("colegio_id").disabled = true;
+  }
+
+  document.getElementById("password").required = false;
+
+  document.getElementById("modalTitle").innerText = "Editar Usuario";
+
+  new bootstrap.Modal(document.getElementById("modalUsuario")).show();
+}
+
+// Cargar nombres de colegios según distrito seleccionado
+function cargarNombresColegios(callback) {
+  const distrito = document.getElementById("distrito").value;
+  const nombreSelect = document.getElementById("nombre_colegio");
+  nombreSelect.innerHTML = '<option value="">Seleccionar nombre</option>';
+  document.getElementById("colegio_id").innerHTML = '<option value="">Seleccionar tipo</option>';
+  document.getElementById("colegio_id").disabled = true;
+
+  if (!distrito) {
+    nombreSelect.disabled = true;
+    if (callback) callback();
+    return;
+  }
+
+  const nombresFiltrados = todosLosColegios
+    .filter(c => c.distrito === distrito)
+    .map(c => c.nombre_colegio)
+    .filter((value, index, self) => self.indexOf(value) === index); 
+
+  nombresFiltrados.forEach(nombre => {
+    const option = document.createElement("option");
+    option.value = nombre;
+    option.textContent = nombre;
+    nombreSelect.appendChild(option);
+  });
+
+  nombreSelect.disabled = false;
+  if (callback) callback();
+}
+
+// Cargar tipos de colegios según nombre seleccionado
+function cargarTiposColegios(callback) {
+  const distrito = document.getElementById("distrito").value;
+  const nombre = document.getElementById("nombre_colegio").value;
+  const tipoSelect = document.getElementById("colegio_id");
+  tipoSelect.innerHTML = '<option value="">Seleccionar tipo</option>';
+
+  if (!nombre) {
+    tipoSelect.disabled = true;
+    if (callback) callback();
+    return;
+  }
+
+  const tiposFiltrados = todosLosColegios.filter(c =>
+    c.distrito === distrito && c.nombre_colegio === nombre);
+
+  tiposFiltrados.forEach(colegio => {
+    const option = document.createElement("option");
+    option.value = colegio.id;
+    option.textContent = colegio.tipo;
+    tipoSelect.appendChild(option);
+  });
+
+  tipoSelect.disabled = false;
+  if (callback) callback();
+}
+
+function cambiarEstado(selectElement) {
+  const usuarioId = selectElement.getAttribute('data-id');
+  const nuevoEstado = selectElement.value;
+
+  fetch(`/usuarios/cambiar-estado/${usuarioId}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      
+    },
+    body: JSON.stringify({ estado: nuevoEstado })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      console.log('Estado actualizado correctamente');
+    } else {
+      alert('Error al actualizar estado: ' + data.error);
+  
+    }
+  })
+  .catch(error => {
+    alert('Error en la comunicación con el servidor');
+    console.error(error);
+  });
+}
+
+function confirmarEliminar(button) {
+  if (!confirm("¿Seguro que desea eliminar este usuario?")) return;
+  const usuarioId = button.getAttribute("data-id");
+  fetch(`/usuarios/eliminar/${usuarioId}`, {
+    method: 'POST'
+  })
+  .then(res => {
+    if (!res.ok) throw new Error("Error al eliminar");
+    // Eliminar fila de la tabla
+    const fila = document.getElementById(`fila-${usuarioId}`);
+    if (fila) fila.remove();
+  })
+  .catch(err => alert("Error al eliminar usuario."));
+}
+
+// Manejar submit del formulario para agregar o editar
+document.getElementById("formUsuario").addEventListener("submit", function(event){
+  event.preventDefault();
+
+  const form = event.target;
+  const usuarioId = document.getElementById("usuarioId").value;
+
+  const url = usuarioId ? `/usuarios/editar/${usuarioId}` : '/usuarios/agregar';
+  const formData = new FormData(form);
+
+  fetch(url, {
+    method: 'POST',
+    body: formData
+  })
+  .then(res => {
+    if (!res.ok) throw new Error("Error al guardar usuario");
+    return res.json();
+  })
+  .then(data => {
+    alert(data.message || "Usuario guardado correctamente");
+    location.reload();
+  })
+  .catch(err => alert("Error al guardar usuario"));
+});
+
+</script>
+
+{% endblock %}
