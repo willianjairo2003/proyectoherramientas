@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tienda Zapatillas</title>
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Iconos -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    .navbar {
+      background-color: #f9f9f9 !important;
+    }
+    /* Navbar */
+    .nav-link {
+      position: relative;
+      color: #333 !important;
+      transition: color 0.3s;
+    }
+    .nav-link::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 50%;             
+      transform: translateX(-50%);
+      width: 0;               
+      height: 2px;
+      background: #000;
+      transition: width 0.3s;
+    }
+    .nav-link:hover::after {
+      width: 100%;
+    }
+    .navbar-brand {
+      font-weight: bold;
+      font-size: 1.3rem;
+    }
+    .cart-icon {
+      font-size: 1.2rem;
+      margin-left: 5px;
+    }
+    
+    @media (max-width: 991px) {
+      .navbar-collapse {
+        text-align: center;
+      }
+      .navbar-nav {
+        margin: 0 auto;
+      }
+      .nav-link::after {
+        width: 0;
+      }
+      .nav-link:hover::after {
+        width: 20%;
+      }
+    }
+
+    /* Carrusel de texto */
+    .text-carousel {
+      background: #ffffff;
+      padding: 5px 0; 
+      text-align: center;
+      font-size: 15px;
+      font-weight: 500;
+      position: relative;
+    }
+    .text-carousel .carousel-item {
+      min-height: auto; 
+    }
+
+    /* Secciones */
+    section {
+      padding: 60px 20px; /* espacio superior e inferior */
+    }
+    #productos { background: #ffffff; }
+    #ofertas { background: #f8f9fa; }
+    #contacto { background: #e9ecef; }
+    
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg shadow-sm fixed-top">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center" href="#">
+        <img src="/img/logo1.png" alt="Logo" style="height:40px; margin-right:8px;">
+        Jzapatillas
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+          <li class="nav-item"><a class="nav-link" href="#productos">Productos</a></li>
+          <li class="nav-item"><a class="nav-link" href="#ofertas">Ofertas</a></li>
+          <li class="nav-item"><a class="nav-link" href="#contacto">Contacto</a></li>
+        </ul>
+        <ul class="navbar-nav ms-lg-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link" href="#"><i class="bi bi-cart3 cart-icon"></i></a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Carrusel de texto -->
+  <div id="textCarousel" class="carousel slide text-carousel" data-bs-ride="carousel" style="margin-top:70px;">
+    <div class="carousel-inner">
+      <div class="carousel-item active">
+        ¡Oferta del día! 20% de descuento en todos los modelos.
+      </div>
+      <div class="carousel-item">
+        Envío gratuito en compras mayores a S/200.
+      </div>
+      <div class="carousel-item">
+        Nuevas zapatillas Adidas disponibles desde hoy.
+      </div>
+    </div>
+  </div>
+  
+	<!-- Carrusel de imágenes automático (banner) -->
+	<div id="bannerCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="3000" style="margin-top:30px;">
+	  <div class="carousel-inner">
+	    <div class="carousel-item active">
+	      <img src="/img/portada3.jpg" class="d-block w-100 img-fluid" alt="Banner 1">
+	    </div>
+	    <div class="carousel-item">
+	      <img src="img/portadaadidas.jpeg" class="d-block w-100 img-fluid" alt="Banner 2">
+	    </div>
+	    <div class="carousel-item">
+	      <img src="img/portadamarcas.jpeg" class="d-block w-100 img-fluid" alt="Banner 3">
+	    </div>
+	  </div>
+	</div>
+
+
+  <!-- Sección Productos y Ofertas con contenedores para tarjetas -->
+  <section id="productos">
+    <div class="container">
+      <h2>Productos</h2>
+      <div class="row" id="productos-container">
+       
+      </div>
+    </div>
+  </section>
+
+  <section id="ofertas">
+    <div class="container">
+      <h2>Ofertas</h2>
+      <div class="row" id="ofertas-container">
+        
+      </div>
+    </div>
+  </section>
+
+<section id="contacto">
+  <div class="container">
+    <h2>Contacto</h2>
+    <p>¿Tienes dudas o consultas? Contáctanos y te responderemos a la brevedad.</p>
+
+    <form action="#" method="POST" class="mt-4">
+      <div class="mb-3">
+        <label for="nombre" class="form-label">Nombre</label>
+        <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Tu nombre" required>
+      </div>
+
+      <div class="mb-3">
+        <label for="correo" class="form-label">Correo electrónico</label>
+        <input type="email" class="form-control" id="correo" name="correo" placeholder="tu@email.com" required>
+      </div>
+
+      <div class="mb-3">
+        <label for="asunto" class="form-label">Asunto</label>
+        <input type="text" class="form-control" id="asunto" name="asunto" placeholder="Asunto de tu mensaje" required>
+      </div>
+
+      <div class="mb-3">
+        <label for="mensaje" class="form-label">Mensaje</label>
+        <textarea class="form-control" id="mensaje" name="mensaje" rows="4" placeholder="Escribe tu mensaje aquí..." required></textarea>
+      </div>
+
+      <button type="submit" class="btn btn-primary">Enviar</button>
+    </form>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="mt-5 pt-4">
+  <hr> <!-- Línea divisoria -->
+  <div class="container">
+    <div class="row text-center text-md-start align-items-center">
+      
+      <!-- Columna 1: Logo y nombre -->
+      <div class="col-md-4 mb-3 d-flex align-items-center justify-content-center justify-content-md-start">
+        <img src="/img/logo1.png" alt="Logo" style="height:40px; margin-right:8px;">
+        <span class="fw-bold">Jzapatillas</span>
+      </div>
+
+      <!-- Columna 2: Links -->
+      <div class="col-md-4 mb-3">
+        <h6 class="fw-bold">Enlaces</h6>
+        <ul class="list-unstyled">
+          <li><a href="#productos" class="text-dark text-decoration-none">Productos</a></li>
+          <li><a href="#ofertas" class="text-dark text-decoration-none">Ofertas</a></li>
+          <li><a href="#contacto" class="text-dark text-decoration-none">Contacto</a></li>
+        </ul>
+      </div>
+
+      <!-- Columna 3: Redes sociales -->
+      <div class="col-md-4 mb-3">
+        <h6 class="fw-bold">Síguenos</h6>
+        <a href="#" class="text-dark mx-1"><i class="bi bi-facebook fs-5"></i></a>
+        <a href="#" class="text-dark mx-1"><i class="bi bi-instagram fs-5"></i></a>
+        <a href="#" class="text-dark mx-1"><i class="bi bi-twitter fs-5"></i></a>
+      </div>
+
+    </div>
+
+    <div class="text-center mt-3 mb-4">
+      <small class="text-muted">&copy; 2025 Jzapatillas. Todos los derechos reservados.</small>
+    </div>
+  </div>
+</footer>
+
+
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+  const productos = [
+    { nombre: "Adidas forum", precio: 350, img: "/img/adidas.png", imgHover: "/img/adidasrosas.png" },
+    { nombre: "Air Max 90", precio: 400, img: "/img/air90.png", imgHover: "/img/airmax90mujer.png" },
+    { nombre: "Adidas Court", precio: 300, img: "/img/court.png", imgHover: "/img/decon.jpg" },
+    { nombre: "Lv Skate black and white", precio: 560, img: "/img/skate.png", imgHover: "/img/skate1.png" }
+  ];
+
+  const ofertas = [
+    { nombre: "Puma suede pink", precio: 300, oferta: 230, img: "/img/pumapink.png", imgHover: "/img/pumapink1.png" },
+    { nombre: "Off White black", precio: 1400, oferta: 820, img: "/img/offwhite.png", imgHover: "/img/offwhite1.png" },
+    { nombre: "Puma Suede", precio: 300, oferta: 250, img: "/img/suede.png", imgHover: "/img/puma1.png" },
+    { nombre: "Amiri White", precio: 670, oferta: 550, img: "/img/amiri.png", imgHover: "/img/amiri1.png" }
+  ];
+
+  function generarTarjetas(lista, contenedorId, mostrarOferta=false) {
+    const contenedor = document.getElementById(contenedorId);
+    contenedor.innerHTML = lista.map(p => `
+      <div class="col-6 col-md-3 mb-4">
+        <div class="card h-100 shadow-sm">
+          <img src="${p.img}" class="card-img-top" alt="${p.nombre}"
+              onmouseenter="this.src='${p.imgHover || p.img}'"
+              onmouseleave="this.src='${p.img}'">
+          <div class="card-body text-center">
+            <h5 class="card-title">${p.nombre}</h5>
+            <p class="card-text">
+              ${mostrarOferta && p.oferta 
+                ? `<span class="text-decoration-line-through text-muted">S/${p.precio}</span> 
+                  <span class="text-danger">S/${p.oferta}</span>` 
+                : `S/${p.precio}`}
+            </p>
+            <a href="#" class="btn btn-primary btn-sm">Agregar al carrito</a>
+          </div>
+        </div>
+      </div>
+    `).join("");
+  }
+
+  // Generar tarjetas al cargar
+  generarTarjetas(productos, "productos-container");
+  generarTarjetas(ofertas, "ofertas-container", true);
+</script>
+</body>
+</html>
