@@ -1,0 +1,328 @@
+:root {
+  --primary-color: #121112;
+  --secondary-color: #3c0474;
+  --text-white: #fff;
+  --icon-size: 40px;
+  --icon-font: 1rem;
+  --text-size: 2rem;
+  --link-width: 220px;
+  --anim-speed: 1s;
+}
+
+/* General */
+body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  color: var(--text-white);
+}
+
+/* Oculta el scroll mientras se muestra la introducción */
+body.no-scroll {
+  overflow: hidden;
+}
+
+/* Iconos */
+.iconos {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  opacity: 0;
+  transform: translateY(-50px);
+  animation: dropIcons var(--anim-speed) forwards;
+}
+.icon-circle {
+  width: var(--icon-size);
+  height: var(--icon-size);
+  border: 2px solid rgba(155, 100, 255, 0.5);
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: transform 0.3s;
+  box-shadow: 0 4px 8px rgba(77, 15, 193, 0.3), 0 0 4px rgba(235, 95, 240, 0.2);
+}
+.icon-circle i {
+  font-size: var(--icon-font);
+  color: var(--text-white);
+}
+
+/* Título */
+.titulo {
+  font-weight: 800;
+  font-size: var(--text-size);
+  opacity: 0;
+  position: relative;
+  left: -50px;
+  animation: slideLeft var(--anim-speed) forwards 0.5s;
+}
+
+/* Subtítulo */
+.subtitulo {
+  font-weight: 900;
+  font-size: var(--text-size);
+  opacity: 0;
+  position: relative;
+  top: 50px;
+  animation: slideUp var(--anim-speed) forwards 1s;
+}
+.grad-word {
+  background: linear-gradient(to right, #6305f0, #a749e5);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Link */
+.link-typing {
+  font-weight: 400;
+  font-size: 0.8rem;
+  color: var(--text-white);
+  white-space: nowrap;
+  overflow: hidden;
+  height: 1.8rem;
+  opacity: 0;
+  position: relative;
+  right: 50px;
+  animation: slideRight var(--anim-speed) forwards 1.5s;
+  background: linear-gradient(135deg, rgba(77,15,193,0.3), rgba(235,95,240,0.3));
+  padding: 0.3rem 0.8rem;
+  border-radius: 12px;
+  backdrop-filter: blur(4px);
+  box-shadow: 0 10px 15px rgba(0,0,0,0.35);
+}
+
+/* Animaciones intro */
+@keyframes dropIcons {from {opacity:0; transform:translateY(-50px);} to {opacity:1; transform:translateY(0);}}
+@keyframes slideLeft {from {opacity:0; left:-50px;} to {opacity:1; left:0;}}
+@keyframes slideUp {from {opacity:0; top:50px;} to {opacity:1; top:0;}}
+@keyframes slideRight {from {opacity:0; right:50px;} to {opacity:1; right:0;}}
+
+/* Header */
+#header {
+  position: relative;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  background: rgba(18, 17, 18, 0.3);
+  backdrop-filter: blur(5px);
+  padding: 0.7rem 0;
+}
+
+/* Nombre y links */
+#brand-name { font-size: 1rem; color: #fff; }
+
+#navbar-links .nav-link,
+#mobile-links .nav-link {
+  font-size: 0.85rem;
+  color: #fff;
+  padding: 0.3rem 0.7rem;
+  transition: all 0.3s;
+}
+
+#navbar-links .nav-item {
+  margin-left: 1rem;
+}
+#navbar-links .nav-item:first-child {
+  margin-left: 0;
+}
+
+/* Link activo */
+#navbar-links .nav-link.active {
+  color: #a749e5;
+  position: relative;
+}
+#navbar-links .nav-link.active::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  width: 100%;
+  height: 2px;
+  background: #a749e5;
+  border-radius: 2px;
+}
+
+#navbar-links .nav-link:hover {
+  color: #a749e5;
+}
+
+/* Botón hamburguesa */
+#menu-toggle {
+  color: #fff;
+  background: none;
+  border: none;
+  padding: 0.2rem 0.5rem;
+}
+#menu-toggle:focus,
+#menu-toggle:hover {
+  background: none;
+  box-shadow: none;
+}
+
+/* Menú móvil */
+#mobile-menu {
+  display: none;
+  position: fixed;
+  top: 55px;
+  left: 0;
+  width: 100%;
+  background: rgba(18, 17, 18, 0.3);
+  backdrop-filter: blur(5px);
+  z-index: 9999;
+  padding: 1rem 0;
+  transition: all 0.3s;
+}
+#mobile-links li { margin: 0.5rem 0; }
+#mobile-menu.show {
+  display: block;
+  animation: slideDown 0.3s forwards;
+}
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px);}
+  to { opacity: 1; transform: translateY(0);}
+}
+#mobile-links .nav-link {
+  position: relative;
+  display: inline-block;
+}
+#mobile-links .nav-link::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 0;
+  height: 2px;
+  background: #a749e5;
+  border-radius: 2px;
+  transition: width 0.3s;
+}
+#mobile-links .nav-link:hover::after {
+  width: 100%;
+}
+
+
+
+
+/* Evitar scroll horizontal */
+#sobre-mi {
+  overflow-x: hidden;
+  transform: translateY(-30px);
+   padding-inline: clamp(1rem, 5%, 3rem);
+}
+
+/* ----- SOBRE MÍ ----- */
+#sobre-mi .social-icon {
+  position: relative; /* o absolute si quieres flotarlos */
+  z-index: 10; /* mayor que el header o menú */
+}
+
+/* ----- Íconos sociales animados ----- */
+#sobre-mi .social-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.05);
+  color: #fff;
+  text-decoration: none;
+  box-shadow: 0 4px 8px rgba(255, 255, 255, 0.2);
+  opacity: 0; /* inicia oculto para animar */
+  transform: translateY(-80px); /* más arriba */
+  
+
+}
+
+
+
+#sobre-mi .social-icon i {
+  font-size: 1rem; /* antes era 1rem */
+}
+
+#sobre-mi .social-icon:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 0 25px rgba(255, 255, 255, 0.5),
+              0 6px 15px rgba(255, 255, 255, 0.3);
+  transition: all 0.7s ease-in-out; /* Suaviza la animación solo al hover */
+}
+
+#sobre-mi .social-icon.facebook:hover { background-color: #1877f2; }
+#sobre-mi .social-icon.tiktok:hover { background-color: #000000; }
+#sobre-mi .social-icon.youtube:hover { background-color: #ff0000; }
+
+
+/* Título */
+#sobre-mi .titulo-sobre-mi {
+  font-weight: 800;
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  opacity: 1;
+}
+#sobre-mi .titulo-sobre-mi .normal { color: #fff; }
+#sobre-mi .titulo-sobre-mi .grad-word {
+  background: linear-gradient(to right, #6305f0, #a749e5);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
+}
+
+/* Texto */
+#sobre-mi .sobre-mi-text {
+  font-size: 0.8rem;
+  line-height: 1.6;
+  color: #f1f1f1;
+  opacity: 1;
+}
+
+/* Imagen */
+#sobre-mi .sobre-mi-img {
+  width: 90%;
+  max-width: 400px;
+  height: 500px;
+  border-radius: 10px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  object-fit: cover;
+  opacity: 1;
+}
+
+
+
+#sobre-mi .col-md-6:first-child,
+#sobre-mi .col-md-6:last-child {
+  opacity: 0;
+  transform: translateX(0);
+  transition: opacity 0.7s ease; /* ✅ Solo suaviza el cambio de opacidad */
+}
+
+/* Estado visible — se activa al terminar la intro */
+#sobre-mi.visible .col-md-6:first-child {
+  opacity: 1;
+  transform: translateX(50px); /* texto desde la izquierda */
+  animation: slideFromLeft 0.7s forwards;
+}
+
+#sobre-mi.visible .col-md-6:last-child {
+  opacity: 1;
+  transform: translateX(-50px); /* imagen desde la derecha */
+  animation: slideFromRight 0.7s forwards;
+}
+
+/* Keyframes */
+@keyframes slideFromLeft {
+  from { opacity: 0; transform: translateX(-80px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slideFromRight {
+  from { opacity: 0; transform: translateX(80px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+
+/* Keyframes caída desde arriba */
+@keyframes dropIcons {
+  from { opacity: 0; transform: translateY(-80px); }
+  to { opacity: 1; transform: translateY(0); }
+}
