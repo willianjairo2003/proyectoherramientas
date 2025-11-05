@@ -17,6 +17,12 @@ body {
   color: var(--text-white);
 }
 
+section {
+  background: transparent !important;
+  position: relative;
+  z-index: 1;
+}
+
 /* Oculta el scroll mientras se muestra la introducción */
 body.no-scroll {
   overflow: hidden;
@@ -99,7 +105,7 @@ body.no-scroll {
 
 /* Header */
 #header {
-  position: relative;
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
@@ -107,6 +113,11 @@ body.no-scroll {
   background: rgba(18, 17, 18, 0.3);
   backdrop-filter: blur(5px);
   padding: 0.7rem 0;
+  transition: transform 0.3s ease;
+}
+
+#header.menu-open {
+transform: translateY(150px);
 }
 
 /* Nombre y links */
@@ -161,31 +172,42 @@ body.no-scroll {
 }
 
 /* Menú móvil */
+/* Menú móvil */
 #mobile-menu {
-  display: none;
+  display: block; /* siempre presente para animación */
   position: fixed;
-  top: 55px;
+  top: 55px; /* debajo del header */
   left: 0;
   width: 100%;
   background: rgba(18, 17, 18, 0.3);
   backdrop-filter: blur(5px);
-  z-index: 9999;
+  z-index: 999;
   padding: 1rem 0;
-  transition: all 0.3s;
+
+  transform: translateY(-100%); /* empieza oculto arriba */
+  opacity: 0;
+  pointer-events: none;
+
+  /* Transición suave */
+  transition: transform 0.5s cubic-bezier(0.25, 0.8, 0.25, 1), 
+              opacity 0.5s ease;
 }
-#mobile-links li { margin: 0.5rem 0; }
+
 #mobile-menu.show {
-  display: block;
-  animation: slideDown 0.3s forwards;
+  transform: translateY(0); /* baja suavemente */
+  opacity: 1;
+  pointer-events: auto;
 }
-@keyframes slideDown {
-  from { opacity: 0; transform: translateY(-10px);}
-  to { opacity: 1; transform: translateY(0);}
+
+#mobile-links li { 
+  margin: 0.5rem 0; 
 }
+
 #mobile-links .nav-link {
   position: relative;
   display: inline-block;
 }
+
 #mobile-links .nav-link::after {
   content: '';
   position: absolute;
@@ -197,9 +219,11 @@ body.no-scroll {
   border-radius: 2px;
   transition: width 0.3s;
 }
+
 #mobile-links .nav-link:hover::after {
   width: 100%;
 }
+
 
 
 
@@ -395,6 +419,139 @@ body.no-scroll {
 
 
 
+
+/* Fondo idéntico al de "Sobre mí" */
+#tecnologias {
+      background: linear-gradient(135deg, #121112, #3c0474);
+      padding: 80px 0;
+      color: #fff;
+}
+
+/* Título */
+#tecnologias h2 {
+      font-weight: 700;
+      margin-bottom: 40px;
+      color: #fff;
+}
+
+.text-purple {
+  background: linear-gradient(to right, #6305f0, #a749e5);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+
+/* Botones de categoría */
+.category-btn {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  border: none; /* sin marco */
+  margin: 0 8px 10px 8px;
+  border-radius: 8px;
+  padding: 10px 25px;
+  font-size: 14px;
+  transition: all 0.5s ease; /* transición más suave */
+}
+
+/* Estado activo y hover */
+.category-btn.active,
+.category-btn:hover {
+  background: linear-gradient(135deg, #6305f0, #a749e5);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(167, 73, 229, 0.25); /* sombra más suave */
+  transform: translateY(-2px); /* ligero levantamiento al pasar el mouse */
+}
+
+
+
+
+/* Grupo de tecnologías */
+.tech-group {
+      display: none;
+      justify-content: center;
+}
+
+.tech-group.active {
+      display: contents;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+}
+
+/* Tarjetas cuadradas */
+.tech-card-wrapper {
+      display: flex;
+      margin-bottom: 10px;
+      justify-content: center;
+}
+
+.tech-card {
+      width: 100%;
+      aspect-ratio: 1 / 1; /* Siempre cuadradas */
+      max-width: 150px;    /* Puedes ajustar el tamaño */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background-color: rgba(255, 255, 255, 0.05);
+      border: 2px solid rgba(255, 255, 255, 0.15);
+      border-radius: 20px;
+      color: #fff;
+      transition: border-color 0.4s ease, box-shadow 0.4s ease, transform 0.3s ease;
+}
+
+.tech-card:hover {
+      border-color: #a749e5;
+      box-shadow: 0 0 12px rgba(167, 73, 229, 0.4);
+}
+
+.tech-card i {
+      font-size: 2.5rem;
+      margin-bottom: 8px;
+}
+
+.tech-card h6 {
+      font-weight: 600;
+      margin: 0;
+      font-size: 13px;
+      color: #fff;
+      text-align: center;
+}
+
+
+
+
+
+/* ✨ Animación de entrada de la sección Tecnologías ✨ */
+#tecnologias {
+  opacity: 0;
+  transform: translateY(60px);
+}
+
+#tecnologias.visible {
+  animation: fadeUp 1s ease forwards;
+}
+
+/* Tarjetas individuales (aparecen una por una) */
+.tech-card {
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.tech-card.show {
+  animation: fadeUp 0.8s ease forwards;
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(60px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
 
 
