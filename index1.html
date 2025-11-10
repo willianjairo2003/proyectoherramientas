@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Demo - Ventana de Configuración</title>
+  <style>
+    :root{
+      --bg: #f6f7fb;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --primary: #2563eb; /* azul por defecto */
+      --radius: 12px;
+    }
+    body.dark{
+      --bg: #0b1220;
+      --card: #0f1724;
+      --text: #e6eef8;
+      --muted: #98a1b3;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background:linear-gradient(180deg,var(--bg),#eef2ff); color:var(--text); min-height:100vh;
+      -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+    }
+    header{display:flex;align-items:center;justify-content:space-between;padding:18px 24px}
+    .brand{display:flex;gap:12px;align-items:center}
+    .logo{width:44px;height:44px;border-radius:10px;background:var(--primary);display:flex;align-items:center;justify-content:center;color:white;font-weight:700}
+    .btn{background:var(--primary);color:white;padding:10px 14px;border-radius:10px;border:0;cursor:pointer;font-weight:600}
+    .container{max-width:1100px;margin:24px auto;padding:24px}
+    .card{background:var(--card);border-radius:var(--radius);padding:18px;box-shadow:0 6px 18px rgba(16,24,40,0.06)}
+
+    /* Modal */
+    .modal-backdrop{position:fixed;inset:0;background:rgba(2,6,23,0.5);display:none;align-items:center;justify-content:center;padding:24px}
+    .modal{width:100%;max-width:920px;border-radius:14px;overflow:hidden}
+    .modal-grid{display:grid;grid-template-columns:260px 1fr;min-height:420px}
+    .sidebar{background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);padding:18px}
+    .menu-item{display:flex;align-items:center;gap:10px;padding:10px;border-radius:8px;cursor:pointer;color:var(--muted)}
+    .menu-item.active{background:rgba(37,99,235,0.08);color:var(--text);font-weight:600}
+
+    .panel{padding:18px}
+    .row{display:flex;gap:12px;align-items:center;margin-bottom:12px}
+    label{display:block;font-size:14px;color:var(--muted);margin-bottom:6px}
+    input[type="text"], select, textarea{width:100%;padding:10px;border-radius:8px;border:1px solid #e6e9ef;background:transparent;color:var(--text)}
+    .field{margin-bottom:14px}
+    .toggle{width:48px;height:28px;background:#d1d5db;border-radius:999px;position:relative;cursor:pointer}
+    .toggle .knob{position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:white;transition:all .18s}
+    .toggle.on{background:var(--primary)}
+    .toggle.on .knob{left:23px}
+    .actions{display:flex;gap:10px;justify-content:flex-end;padding:12px;border-top:1px solid rgba(0,0,0,0.04);background:linear-gradient(180deg,transparent,rgba(0,0,0,0.02))}
+
+    .preview{padding:14px;border-radius:10px;background:linear-gradient(180deg,rgba(0,0,0,0.02),transparent)}
+    .small{font-size:13px;color:var(--muted)}
+
+    /* responsive */
+    @media (max-width:760px){
+      .modal-grid{grid-template-columns:1fr}
+      .sidebar{display:flex;gap:8px;overflow:auto}
+    }
+    /* helper */
+    .muted{color:var(--muted)}
+    .controls{display:flex;gap:8px;flex-wrap:wrap}
+    .chip{padding:6px 10px;border-radius:999px;background:#f3f4f6;border:1px solid #e6e9ef}
+    .file-input{display:none}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <div class="logo">W</div>
+      <div>
+        <div style="font-weight:700">Mi Sitio</div>
+        <div class="small muted">Panel de demostración</div>
+      </div>
+    </div>
+    <div>
+      <button id="openSettings" class="btn">Configuración ⚙️</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="card">
+      <h2>Contenido de la página</h2>
+      <p class="small muted">Aquí va el contenido de tu sitio. Usa el botón "Configuración" para abrir la ventana de ajustes y ver cambios en vivo.</p>
+      <div style="height:18px"></div>
+      <div class="preview">Ejemplo: color primario y tema aplicados en tiempo real.</div>
+    </div>
+  </main>
+
+  <!-- Modal -->
+  <div id="modalBackdrop" class="modal-backdrop" aria-hidden>
+    <div class="modal card" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+      <div class="modal-grid">
+        <aside class="sidebar">
+          <div id="menuGeneral" class="menu-item active">General</div>
+          <div id="menuApariencia" class="menu-item">Apariencia</div>
+          <div id="menuNoti" class="menu-item">Notificaciones</div>
+          <div id="menuPriv" class="menu-item">Privacidad</div>
+          <div id="menuAvz" class="menu-item">Avanzado</div>
+          <div style="flex:1"></div>
+          <div class="small muted" style="padding:8px 4px">Guardado local (localStorage)</div>
+        </aside>
+
+        <section class="panel">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <div>
+              <h3 id="settingsTitle">Configuración</h3>
+              <div class="small muted" id="currentTabLabel">General</div>
+            </div>
+            <div style="display:flex;gap:8px;align-items:center">
+              <input id="importFile" class="file-input" type="file" accept="application/json">
+              <button id="btnImport" class="chip">Importar</button>
+              <button id="btnExport" class="chip">Exportar</button>
+            </div>
+          </div>
+
+          <div id="tabGeneral" class="tabContent">
+            <div class="field">
+              <label>Título del sitio</label>
+              <input id="siteTitle" type="text" placeholder="Mi sitio" />
+            </div>
+            <div class="field">
+              <label>Idioma</label>
+              <select id="siteLang">
+                <option value="es">Español</option>
+                <option value="en">English</option>
+                <option value="pt">Português</option>
+              </select>
+            </div>
+            <div class="field">
+              <label class="small">Vista previa</label>
+              <div class="preview" id="livePreview">Mi Sitio • Esta es una vista previa</div>
+            </div>
+          </div>
+
+          <div id="tabApariencia" class="tabContent" style="display:none">
+            <div class="field">
+              <label>Tema</label>
+              <div style="display:flex;gap:8px">
+                <button id="btnLight" class="chip">Claro</button>
+                <button id="btnDark" class="chip">Oscuro</button>
+              </div>
+            </div>
+            <div class="field">
+              <label>Color primario</label>
+              <input id="primaryColor" type="color" value="#2563eb">
+            </div>
+            <div class="field">
+              <label>CSS personalizado (preview en vivo)</label>
+              <textarea id="customCSS" rows="5" placeholder="body { font-family: Inter; }"></textarea>
+            </div>
+          </div>
+
+          <div id="tabNoti" class="tabContent" style="display:none">
+            <div class="field">
+              <label>Notificaciones por email</label>
+              <div id="toggleEmail" class="toggle"><div class="knob"></div></div>
+            </div>
+            <div class="field">
+              <label>Notificaciones push</label>
+              <div id="togglePush" class="toggle"><div class="knob"></div></div>
+            </div>
+          </div>
+
+          <div id="tabPriv" class="tabContent" style="display:none">
+            <div class="field">
+              <label>Seguir estadísticas (tracking)</label>
+              <div id="toggleTracking" class="toggle on"><div class="knob"></div></div>
+              <div class="small muted">Si desactivas, el sitio no enviará eventos de analytics.</div>
+            </div>
+            <div class="field">
+              <label>Política de cookies</label>
+              <select id="cookiePolicy">
+                <option value="strict">Estricta</option>
+                <option value="balanced">Equilibrada</option>
+                <option value="lenient">Permisiva</option>
+              </select>
+            </div>
+          </div>
+
+          <div id="tabAvz" class="tabContent" style="display:none">
+            <div class="field">
+              <label>Exportar configuración (JSON)</label>
+              <div class="small muted">Puedes guardar los ajustes y cargarlos en otra instalación.</div>
+            </div>
+            <div class="field">
+              <label>Limpiar datos locales</label>
+              <button id="btnClear" class="chip">Resetear localStorage</button>
+            </div>
+          </div>
+
+          <div style="height:14px"></div>
+          <div class="actions">
+            <div style="flex:1"></div>
+            <button id="btnReset" class="chip">Restablecer</button>
+            <button id="btnSave" class="btn">Guardar</button>
+            <button id="btnClose" class="chip">Cerrar</button>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* --- Datos por defecto --- */
+    const defaults = {
+      siteTitle: 'Mi Sitio',
+      siteLang: 'es',
+      theme: 'light',
+      primaryColor: '#2563eb',
+      customCSS: '',
+      notifications: { email:false, push:false },
+      tracking: true,
+      cookiePolicy: 'balanced'
+    };
+
+    /* --- Helpers --- */
+    const $ = id => document.getElementById(id);
+    const saveKey = 'mi_sitio_ajustes_v1';
+
+    function openModal(){
+      $('modalBackdrop').style.display = 'flex';
+      $('modalBackdrop').removeAttribute('aria-hidden');
+    }
+    function closeModal(){
+      $('modalBackdrop').style.display = 'none';
+      $('modalBackdrop').setAttribute('aria-hidden','true');
+    }
+
+    function loadSettings(){
+      const raw = localStorage.getItem(saveKey);
+      let s = raw ? JSON.parse(raw) : defaults;
+      // merge missing
+      s = Object.assign({}, defaults, s);
+      // map to inputs
+      $('siteTitle').value = s.siteTitle;
+      $('siteLang').value = s.siteLang;
+      $('primaryColor').value = s.primaryColor;
+      $('customCSS').value = s.customCSS || '';
+      // toggles
+      toggleSet('toggleEmail', s.notifications.email);
+      toggleSet('togglePush', s.notifications.push);
+      toggleSet('toggleTracking', s.tracking);
+      $('cookiePolicy').value = s.cookiePolicy;
+      applyTheme(s.theme);
+      applyPrimaryColor(s.primaryColor);
+      updatePreview();
+    }
+
+    function collectSettings(){
+      return {
+        siteTitle: $('siteTitle').value || defaults.siteTitle,
+        siteLang: $('siteLang').value,
+        theme: document.body.classList.contains('dark') ? 'dark' : 'light',
+        primaryColor: $('primaryColor').value,
+        customCSS: $('customCSS').value,
+        notifications: { email: toggleGet('toggleEmail'), push: toggleGet('togglePush') },
+        tracking: toggleGet('toggleTracking'),
+        cookiePolicy: $('cookiePolicy').value
+      };
+    }
+
+    function saveSettings(){
+      const s = collectSettings();
+      localStorage.setItem(saveKey, JSON.stringify(s));
+      applyPrimaryColor(s.primaryColor);
+      applyCustomCSS(s.customCSS);
+      alert('Ajustes guardados localmente.');
+    }
+
+    function resetSettings(){
+      localStorage.removeItem(saveKey);
+      loadSettings();
+      applyCustomCSS('');
+      alert('Ajustes restaurados a valores por defecto.');
+    }
+
+    /* toggles */
+    function toggleGet(id){
+      return document.getElementById(id).classList.contains('on');
+    }
+    function toggleSet(id, state){
+      const el = document.getElementById(id);
+      if(state) el.classList.add('on'); else el.classList.remove('on');
+    }
+    function toggleToggle(id){
+      const el = document.getElementById(id);
+      el.classList.toggle('on');
+    }
+
+    /* theme & color */
+    function applyTheme(t){
+      if(t === 'dark') document.body.classList.add('dark'); else document.body.classList.remove('dark');
+    }
+    function applyPrimaryColor(hex){
+      document.documentElement.style.setProperty('--primary', hex);
+      // update logo and buttons
+      const ls = document.querySelectorAll('.logo, .btn');
+      ls.forEach(x => x.style.background = hex);
+    }
+
+    /* custom CSS injection */
+    let customStyleEl = null;
+    function applyCustomCSS(css){
+      if(!customStyleEl){ customStyleEl = document.createElement('style'); document.head.appendChild(customStyleEl); }
+      customStyleEl.textContent = css || '';
+    }
+
+    function updatePreview(){
+      $('livePreview').textContent = $('siteTitle').value + ' • Vista previa (' + $('siteLang').value + ')';
+    }
+
+    /* export / import */
+    function exportSettings(){
+      const data = collectSettings();
+      const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href = url; a.download = 'ajustes_mi_sitio.json'; a.click();
+      URL.revokeObjectURL(url);
+    }
+    function importSettings(file){
+      if(!file) return;
+      const r = new FileReader();
+      r.onload = e => {
+        try{
+          const data = JSON.parse(e.target.result);
+          localStorage.setItem(saveKey, JSON.stringify(Object.assign({}, defaults, data)));
+          loadSettings();
+          applyCustomCSS(data.customCSS || '');
+          alert('Configuración importada.');
+        }catch(err){alert('Archivo inválido.');}
+      };
+      r.readAsText(file);
+    }
+
+    /* UI wiring */
+    document.addEventListener('DOMContentLoaded', ()=>{
+      // open/close
+      $('openSettings').addEventListener('click', ()=>{ loadSettings(); openModal(); });
+      $('btnClose').addEventListener('click', closeModal);
+      document.getElementById('modalBackdrop').addEventListener('click', (e)=>{ if(e.target.id === 'modalBackdrop') closeModal(); });
+      // menu tabs
+      const tabs = ['General','Apariencia','Noti','Priv','Avz'];
+      tabs.forEach(name=>{
+        const menu = $('menu'+name);
+        if(!menu) return;
+        menu.addEventListener('click', ()=>{
+          document.querySelectorAll('.menu-item').forEach(m=>m.classList.remove('active'));
+          menu.classList.add('active');
+          document.querySelectorAll('.tabContent').forEach(t=>t.style.display='none');
+          $('tab'+name).style.display='block';
+          $('currentTabLabel').textContent = menu.textContent;
+        });
+      });
+
+      // toggles click
+      ['toggleEmail','togglePush','toggleTracking'].forEach(id=>{
+        $(id).addEventListener('click', ()=>{ toggleToggle(id); });
+      });
+
+      // theme buttons
+      $('btnLight').addEventListener('click', ()=>{ applyTheme('light'); });
+      $('btnDark').addEventListener('click', ()=>{ applyTheme('dark'); });
+
+      // inputs
+      ['siteTitle','siteLang','primaryColor','customCSS'].forEach(id=>{
+        $(id).addEventListener('input', ()=>{ if(id === 'primaryColor') applyPrimaryColor($(id).value); if(id==='siteTitle' || id==='siteLang') updatePreview(); if(id==='customCSS') applyCustomCSS($(id).value); });
+      });
+
+      // save/reset/export/import
+      $('btnSave').addEventListener('click', saveSettings);
+      $('btnReset').addEventListener('click', ()=>{ if(confirm('Restablecer a valores por defecto?')) resetSettings(); });
+      $('btnClear').addEventListener('click', ()=>{ if(confirm('Borrar todos los datos locales?')) { localStorage.clear(); alert('localStorage borrado.'); } });
+      $('btnExport').addEventListener('click', exportSettings);
+      $('btnImport').addEventListener('click', ()=>$('importFile').click());
+      $('importFile').addEventListener('change', e=> importSettings(e.target.files[0]));
+
+      // close on esc
+      window.addEventListener('keydown', (e)=>{ if(e.key === 'Escape') closeModal(); });
+
+      // initial load
+      loadSettings();
+    });
+  </script>
+</body>
+</html>
