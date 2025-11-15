@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous"> 
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link href="principal.css" rel="stylesheet">
+    <title>Ofertas - Zapatillas</title>
+        <!-- CSS interno para animación -->
+    <style>
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 1.2s ease-out forwards;
+            animation-delay: 0.3s;
+        }
+
+        @keyframes fadeInUp {
+            to {
+            opacity: 1;
+            transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    
+    <header id="main-header"> 
+        <nav class="bg-custom text-dark py-2">
+          <div class="container-fluid d-flex justify-content-end align-items-center topbar-animation">
+            
+            <!-- Botón de flecha para mostrar/ocultar enlaces (solo en móvil) -->
+            <div class="d-md-none d-flex align-items-center" id="topbar-mobile-container">
+              <!-- Enlaces ocultos al inicio -->
+              <div class="d-flex align-items-center flex-row-reverse gap-3 d-none" id="topbar-mobile-links">
+                <a href="registro.html" class="text-dark text-decoration-none topbar-link">
+                  <i class="fas fa-user me-1"></i> Iniciar sesión
+                </a>
+                <a href="ayuda.html" class="text-dark text-decoration-none topbar-link">
+                  <i class="fas fa-question-circle me-1"></i> Ayuda
+                </a>
+                <a href="mapa.html" class="text-dark text-decoration-none topbar-link">
+                  <i class="fas fa-box-open me-1"></i> Localizar pedido
+                </a>
+              </div>
+        
+              <!-- Botón de flecha (inicialmente apuntando hacia abajo) -->
+              <button class="btn btn-sm text-dark ms-3" id="topbar-toggle">
+                <i class="fas fa-chevron-down toggle-icon transition-icon"></i>
+              </button>
+            </div>
+        
+            <!-- Enlaces normales en desktop (se ven siempre) -->
+            <div class="d-none d-md-flex flex-row align-items-center" id="topbar-links-desktop">
+              <a href="registro.html" class="text-dark text-decoration-none me-4 topbar-link">
+                <i class="fas fa-user me-1"></i> Iniciar sesión
+              </a>
+              <a href="ayuda.html" class="text-dark text-decoration-none me-4 topbar-link">
+                <i class="fas fa-question-circle me-1"></i> Ayuda
+              </a>
+              <a href="mapa.html" class="text-dark text-decoration-none topbar-link">
+                <i class="fas fa-box-open me-1"></i> Localizar pedido
+              </a>
+            </div>
+          </div>
+        </nav>
+    
+          
+          
+        <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
+            <div class="container-fluid">
+                <!-- Logo Section -->
+                <a class="navbar-brand" href="index.html">
+                    <img src="img/logo1.png" alt="Logo">
+                </a>
+                
+                <!-- Navbar Toggler for small screens -->
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+    
+                <!-- Navbar Links Section (hidden on small screens inside hamburger) -->
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav mx-auto">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="destacados.html">Destacados</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="hombres.html">Hombres</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="mujeres.html">Mujeres</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="ofertas.html">Ofertas</a>
+                        </li>
+                    </ul>
+                </div>
+    
+                <!-- Right-side icons (Search and Cart, placed outside hamburger) -->
+                <div class="navbar-right-icons d-flex">
+                    <!-- Search button -->
+                    <button class="btn btn-outline-secondary me-2" id="search-btn">
+                        <i class="fas fa-search search-icon"></i>
+                    </button>
+                    <!-- Search input field (hidden by default) -->
+                    <input type="text" class="form-control search-input" id="search-input" placeholder="Buscar...">
+    
+                    <!-- Cart button -->
+                    <button class="btn btn-outline-secondary">
+                        <i class="fas fa-shopping-cart cart-icon"></i>
+                    </button>
+                </div>
+            </div>
+        </nav>
+    </header>
+    
+    <!-- Modal buscar -->
+    <div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="searchModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-fullscreen">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <img src="img/logo1.png" alt="Logo" height="40"> 
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="text" id="search-input-modal" class="form-control" placeholder="Buscar productos...">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    </div>
+                </div>
+            </div>
+      </div>
+
+        
+        <section class="position-relative text-white overflow-hidden portada-mujeres d-flex align-items-center" style="height: 90vh;">
+            <!-- Imagen de fondo -->
+            <img src="img/portadamarcas.jpeg" 
+                alt="Banner Mujeres" 
+                class="position-absolute top-0 start-0 w-100 h-100 img-fluid" 
+                style="object-fit: cover; z-index: 1;">
+        
+            <!-- Capa oscura -->
+            <div class="position-absolute top-0 start-0 w-100 h-100" 
+                style="background: rgba(0, 0, 0, 0.5); z-index: 2;"></div>
+        
+            <!-- Contenido centrado -->
+            <div class="container text-center position-relative" style="z-index: 3;">
+            <div class="row justify-content-center">
+                <div class="col-lg-8 col-md-10 col-sm-12 fade-in">
+                <h1 class="fw-bold mb-4 display-4 display-md-3 display-sm-2" style="letter-spacing: 1px;">
+                    <span class="text-warning">20% DE DESCUENTO</span><br>
+                    En tu 2da próxima compra
+                </h1>
+                <a href="#ofertas" class="btn btn-outline-light btn-lg px-4 py-2 fw-semibold shadow-sm">
+                    VER MÁS
+                </a>
+                </div>
+            </div>
+            </div>
+        </section>
+  
+      
+      
+
+    <section class="container my-5" id="ofertas">
+        <h2 class="text-left mb-4 fw-bold" style="font-family: 'Poppins', sans-serif; font-size: 50px;">
+          OFERTAS
+        </h2>
+        <div class="row g-4" id="product-container">
+          <!-- Las tarjetas se inyectan desde JS -->
+        </div>
+    
+      </section>
+      
+
+  <!-- Línea superior antes del footer -->
+  <hr class="m-0" style="border-top: 1px solid #a1a1a1;">
+
+  <footer class="footer-section bg-white text-black pt-5 pb-5">
+    <div class="container">
+      <div class="row justify-content-center text-center text-md-start">
+        
+        <!-- Logo -->
+        <div class="col-md-4 mb-5">
+          <img src="img/logo1.png" alt="Logo" style="max-width: 150px;">
+        </div>
+  
+        <!-- Información -->
+        <div class="col-md-4 mb-5 px-md-5">
+          <h5 class="mb-5 fw-bold" style="font-size: 22px;">INFORMACIÓN</h5>
+          <ul class="list-unstyled" style="color: #6e6e6e;">
+            <li class="mb-3">Si deseas mayor Información escríbenos por WhatsApp o síguenos por redes</li>
+            <li class="mb-3">WhatsApp: +54 11 1234-5678</li>
+            <li class="mb-3">Email: contacto@tuweb.com</li>
+          </ul>
+        </div>
+  
+        <!-- Políticas -->
+        <div class="col-md-4 mb-5 px-md-5">
+          <h5 class="mb-5 fw-bold" style="font-size: 24x;">Políticas de la empresa</h5>
+          <ul class="list-unstyled">
+            <li class="mb-3"><a href="politicas.html" class="footer-link">Política de Envío</a></li>
+            <li class="mb-3"><a href="reembolso.html" class="footer-link">Política de Reembolso</a></li>
+            <li class="mb-3"><a href="preguntas.html" class="footer-link">Preguntas Frecuentes</a></li>
+          </ul>
+        </div>
+  
+      </div>
+  
+      <!-- Redes sociales -->
+      <div class="row mt-5">
+        <div class="col text-center">
+          <a href="#" class="social-icon text-black mx-3 fs-5"data-bs-toggle="tooltip" title="Síguenos en Facebook"><i class="fab fa-facebook-f"></i></a>
+          <a href="#" class="social-icon text-black mx-3 fs-5"data-bs-toggle="tooltip" title="Síguenos en Instagram"><i class="fab fa-instagram"></i></a>
+          <a href="#" class="social-icon text-black mx-3 fs-5"data-bs-toggle="tooltip" title="Síguenos en Tiktok"><i class="fab fa-tiktok"></i></a>
+        </div>
+      </div>    
+    </div>
+  </footer>    
+  
+  
+  <!-- Botón flotante de WhatsApp -->
+  <div id="whatsapp-floating" class="whatsapp-floating">
+    <!-- Mensaje tipo burbuja -->
+    <span id="whatsapp-msg" class="whatsapp-message">Atención al cliente</span>
+  
+    <!-- Botón flotante -->
+    <div id="whatsapp-button" class="whatsapp-icon-container">
+      <i id="whatsapp-icon" class="fab fa-whatsapp whatsapp-icon"></i>
+    </div>
+  
+    <!-- Cuadro emergente -->
+    <div id="whatsapp-box" class="whatsapp-box d-none">
+      <div class="box-header">
+        <span class="title">INICIAR CONVERSACIÓN</span>
+        <small class="subtitle">Seleccione la opción</small>
+      </div>
+      <div class="box-body">
+        <a href="https://wa.me/965132680" target="_blank" class="d-flex align-items-center justify-content-between">
+          <!-- Fila completa es clickeable -->
+          <div class="d-flex align-items-center">
+            <i class="fab fa-whatsapp me-2 text-success fs-4"></i>
+            <span class="fw-semibold">Soporte Online</span>
+          </div>
+          <i class="fas fa-comment-dots text-muted"></i>
+        </a>
+      </div>
+    </div>
+    </div>
+  
+    <script>
+      //Header oculto cuando baja y cuando sube mostrarse
+      let lastScrollTop = 0;
+      const header = document.getElementById('main-header');
+
+      window.addEventListener('scroll', () => {
+      const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+
+      if (currentScroll > lastScrollTop && currentScroll > 100) {
+      // Scroll hacia abajo -> ocultar
+      header.style.transform = 'translateY(-101%)';
+      } else {
+      // Scroll hacia arriba -> mostrar
+      header.style.transform = 'translateY(0)';
+      }
+
+      lastScrollTop = currentScroll <= 0 ? 0 : currentScroll; // Evita valores negativos
+      });
+
+      // Opcional: animación suave
+      header.style.transition = 'transform 0.3s ease';
+      //-------------------------------------------------------------------------------
+
+
+
+        // Get the search button and input elements
+        const searchBtn = document.getElementById('search-btn');
+
+        // Al hacer click en el boton se habre el modal
+        searchBtn.addEventListener('click', () => {
+            var myModal = new bootstrap.Modal(document.getElementById('searchModal'));
+            myModal.show();
+        });
+
+        //Flecha para ocultar los iconos de busqueda y compras en una flecha
+
+        const toggleBtn = document.getElementById('topbar-toggle');
+        const toggleIcon = toggleBtn.querySelector('i');
+        const mobileLinks = document.getElementById('topbar-mobile-links');
+
+        toggleBtn.addEventListener('click', function () {
+            mobileLinks.classList.toggle('d-none');  // Mostrar/ocultar los enlaces
+            toggleIcon.classList.toggle('rotate-left');  // Girar la flecha hacia la izquierda
+        });
+
+
+      document.querySelectorAll('.favorite-icon i, .favorite-btn i').forEach(icon => {
+      icon.addEventListener('click', function () {
+        this.classList.toggle('far'); // corazón vacío
+        this.classList.toggle('fas'); // corazón lleno
+      });
+    });
+
+    document.querySelectorAll('.heart-icon').forEach(icon => {
+      icon.addEventListener('click', () => {
+        icon.classList.toggle('active');
+        const i = icon.querySelector('i');
+        if (icon.classList.contains('active')) {
+          i.classList.remove('far'); // ícono vacío
+          i.classList.add('fas');    // ícono lleno
+        } else {
+          i.classList.remove('fas');
+          i.classList.add('far');
+        }
+      });
+    });
+
+
+    const products = [
+    {
+      imgMain: 'img/jordan1-1.png',
+      imgHover: 'img/jordan1.png',
+      title: 'Custom Jordan 1 Mid SE',
+      oldPrice: 'S/. 690.00',
+      newPrice: 'S/. 450.00',
+      link: 'enlace_a_tu_producto_1.html'
+    },
+    {
+      imgMain: 'img/air270.png',
+      imgHover: 'img/air270-1.png',
+      title: 'Nike Air Max 270 Black',
+      oldPrice: 'S/. 560.00',
+      newPrice: 'S/. 279.00',
+      link: 'enlace_a_tu_producto_2.html'
+    },
+    {
+      imgMain: 'img/adidasrosas.png',
+      imgHover: 'img/adidasrosas-1.png',
+      title: 'Adidas Forum Low Bad Bunny Pink',
+      oldPrice: 'S/. 500.00',
+      newPrice: 'S/. 399.90',
+      link: 'enlace_a_tu_producto_3.html'
+    },
+    {
+      imgMain: 'img/lvpink.png',
+      imgHover: 'img/lvpink1.png',
+      title: 'Louis Vuitton Trainer Pink',
+      oldPrice: 'S/. 600.00',
+      newPrice: 'S/. 450.00',
+      link: 'enlace_a_tu_producto_4.html'
+    },
+    {
+      imgMain: 'img/amiri1.png',
+      imgHover: 'img/amiri.png',
+      title: 'Jordan Retro 4 Oreo',
+      oldPrice: 'S/. 690.00',
+      newPrice: 'S/. 450.00',
+      link: 'enlace_a_tu_producto_5.html'
+    },
+    {
+      imgMain: 'img/lv1.png',
+      imgHover: 'img/trainer.png',
+      title: 'LV Trainer White X Black',
+      oldPrice: 'S/. 690.00',
+      newPrice: 'S/. 450.00',
+      link: 'enlace_a_tu_producto_6.html'
+    },
+    {
+      imgMain: 'img/travis.png',
+      imgHover: 'img/zapatilla4.jpg',
+      title: 'Jordan Retro 4 Travis Scott',
+      oldPrice: 'S/. 560.00',
+      newPrice: 'S/. 280.00',
+      link: 'enlace_a_tu_producto_7.html'
+    },
+    {
+      imgMain: 'img/offwhite.png',
+      imgHover: 'img/orffwhite1.png',
+      title: 'Off White Panda',
+      oldPrice: 'S/. 500.00',
+      newPrice: 'S/. 399.90',
+      link: 'enlace_a_tu_producto_8.html'
+    }
+  ];
+
+  const container = document.getElementById('product-container');
+
+  products.forEach(p => {
+    const card = document.createElement('div');
+    card.className = 'col-md-3 col-sm-6';
+    card.innerHTML = `
+      <div class="card border-0 shadow-sm luxury-card h-100">
+        <div class="position-relative overflow-hidden luxury-img-container">
+          <a href="${p.link}">
+            <img src="${p.imgMain}" alt="${p.title}" class="img-fluid main-img">
+            <img src="${p.imgHover}" alt="${p.title}" class="img-fluid hover-img">
+          </a>
+          <span class="badge bg-danger position-absolute top-0 start-0 m-2 offer-badge">OFERTA</span>
+          <span class="heart-icon position-absolute top-0 end-0 m-2">
+            <i class="far fa-heart"></i>
+          </span>
+        </div>
+        <div class="card-body text-center">
+          <a href="${p.link}" class="text-decoration-none">
+            <h6 class="fw-semibold mb-1">${p.title}</h6>
+          </a>
+          <p class="text-muted mb-0"><del>${p.oldPrice}</del> ${p.newPrice}</p>
+        </div>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+
+  // Corazón al hacer click
+  document.addEventListener('click', function (e) {
+    if (e.target.closest('.heart-icon')) {
+      const icon = e.target.closest('.heart-icon');
+      const i = icon.querySelector('i');
+      icon.classList.toggle('active');
+      i.classList.toggle('fas');
+      i.classList.toggle('far');
+    }
+  });
+
+  const whatsappBtn = document.getElementById('whatsapp-button');
+        const whatsappIcon = document.getElementById('whatsapp-icon');
+        const whatsappBox = document.getElementById('whatsapp-box');
+        const whatsappMessage = document.getElementById('whatsapp-msg');
+        let isOpen = false;
+
+        whatsappBtn.addEventListener('click', () => {
+          isOpen = !isOpen;
+
+          // Flip animation (si tienes clases para eso)
+          whatsappBtn.classList.toggle('flipped');
+
+          // Cambia entre ícono WhatsApp y X
+          if (isOpen) {
+            whatsappIcon.classList.remove('fab', 'fa-whatsapp');
+            whatsappIcon.classList.add('fas', 'fa-times');
+          } else {
+            whatsappIcon.classList.remove('fas', 'fa-times');
+            whatsappIcon.classList.add('fab', 'fa-whatsapp');
+          }
+
+          // Mostrar/ocultar el cuadro
+          whatsappBox.classList.toggle('d-none');
+
+          // Ocultar el texto "Atención al cliente"
+          whatsappMessage.style.opacity = isOpen ? '0' : '1';
+          whatsappMessage.style.pointerEvents = isOpen ? 'none' : 'auto';
+        });
+ 
+  </script>
+  
+  
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script> 
+  
+</body>
+</html>
